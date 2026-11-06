@@ -39,7 +39,7 @@ This uses the FreeCAD maintainers' stable package archive, because Ubuntu 24.04 
 sudo add-apt-repository --yes ppa:freecad-maintainers/freecad-stable
 sudo apt-get update
 sudo apt-get install freecad-python3 python3-pytest python3-openpyxl
-export PYTHONPATH="/usr/lib/freecad-python3/lib:/usr/lib/freecad/lib:$PWD"
+export PYTHONPATH="/usr/lib/freecad-python3/lib:/usr/lib/freecad/lib:/usr/share/freecad/Mod:$PWD"
 /usr/bin/python3 -m freecad_tools generate examples/dimensions.csv build/demo
 ```
 

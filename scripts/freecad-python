@@ -6,5 +6,5 @@ if [ -x /Applications/FreeCAD.app/Contents/Resources/bin/python ]; then
     export PYTHONPATH="/Applications/FreeCAD.app/Contents/Resources/lib:$ROOT/.freecad-deps:$ROOT${PYTHONPATH:+:$PYTHONPATH}"
     exec /Applications/FreeCAD.app/Contents/Resources/bin/python "$@"
 fi
-export PYTHONPATH="/usr/lib/freecad-python3/lib:/usr/lib/freecad/lib:$ROOT/.freecad-deps:$ROOT${PYTHONPATH:+:$PYTHONPATH}"
+export PYTHONPATH="/usr/lib/freecad-python3/lib:/usr/lib/freecad/lib:/usr/share/freecad/Mod:$ROOT/.freecad-deps:$ROOT${PYTHONPATH:+:$PYTHONPATH}"
 exec /usr/bin/python3 "$@"

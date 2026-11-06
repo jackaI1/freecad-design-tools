@@ -10,7 +10,7 @@ jobs:
   headless:
     runs-on: ubuntu-24.04
     env:
-      PYTHONPATH: /usr/lib/freecad-python3/lib:/usr/lib/freecad/lib:.
+      PYTHONPATH: /usr/lib/freecad-python3/lib:/usr/lib/freecad/lib:/usr/share/freecad/Mod:.
       QT_QPA_PLATFORM: offscreen
     steps:
       - uses: actions/checkout@v4
