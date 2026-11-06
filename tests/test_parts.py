@@ -78,6 +78,8 @@ def test_csv_library_creates_six_variants_and_eight_assembly_occurrences(tmp_pat
         from freecad_tools.bom import collect_bom
 
         assert sum(row["quantity"] for row in collect_bom(assembly.getObject("Assembly"))) == 8
+        assert all(not part.Visibility for part in assembly.getObject("Library").Group)
+        assert all(link.Visibility for link in assembly.getObject("Assembly").Group)
     finally:
         App.closeDocument(assembly.Name)
     assert len(list((result / "library").glob("*.FCStd"))) == 6

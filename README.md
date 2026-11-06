@@ -4,7 +4,9 @@ I built a small toolkit for making mounting parts because changing the same dime
 
 I enter dimensions in a table, then run one command to make plates, L-shaped brackets and hollow spacers. The toolkit also makes an example assembly, counts its parts, and highlights similar designs I could reuse. A local revision folder keeps drafts separate from files I have reviewed and released.
 
-**Try the example:** install FreeCAD and the Python dependencies below, then run `python -m freecad_tools generate examples/dimensions.csv build/demo` using FreeCAD's Python. Open `build/demo/assembly.FCStd` in FreeCAD and read `build/demo/bom.xlsx` for the shopping-list view. The eight pieces are spread apart so I can inspect them; this is an exploded layout, not a mechanically constrained or load-tested assembly.
+**Try the example:** install FreeCAD and the Python dependencies below, then run `python -m freecad_tools generate examples/dimensions.csv build/demo` using FreeCAD's Python. Run [the assembly opener macro](macros/OpenAssembly.FCMacro) in FreeCAD, select this checkout and `build/demo/assembly.FCStd`, and read `build/demo/bom.xlsx` for the shopping-list view. The eight pieces are spread apart so I can inspect them; this is an exploded layout, not a mechanically constrained or load-tested assembly.
+
+![Exploded eight-piece assembly opened in FreeCAD](examples/assembly-preview.png)
 
 ## What I get
 
@@ -47,6 +49,8 @@ The output folder must be empty. I use a new folder for another run so an existi
 
 ### Run as a FreeCAD macro
 
+To open an existing assembly, execute [macros/OpenAssembly.FCMacro](macros/OpenAssembly.FCMacro) through **Macro > Macros**, then select this checkout and its `assembly.FCStd`. This restores the editable code and displays the eight occurrences, with library definitions hidden. Headless exports do not contain desktop display settings, so I use this opener to set the view.
+
 Install `openpyxl` into `.freecad-deps` as above, then open [macros/MountingToolkit.FCMacro](macros/MountingToolkit.FCMacro) through **Macro > Macros** in FreeCAD. Execute it and select this checkout, the CSV, and an empty output folder. It opens the generated assembly for inspection.
 
 Keep this checkout on FreeCAD's Python path when reopening files. In FreeCAD's Python console, run the following once before opening a part, replacing the example path:
@@ -55,7 +59,10 @@ Keep this checkout on FreeCAD's Python path when reopening files. In FreeCAD's P
 import sys
 
 sys.path.insert(0, "/path/to/freecad-design-tools")
+import freecad_tools.parts
 ```
+
+FreeCAD 1.1 restricts which Python modules a saved file can load automatically. Importing this trusted checkout first restores the editable part code; the toolkit macro does this for me. I do not need to change FreeCAD's security settings.
 
 Each native part includes a spreadsheet named `Dimensions_...`. Edit a number in column B and recompute the document to change the solid. The Python proxy, a small class that rebuilds the shape, restores when I reopen the file. If dimensions become impossible, it clears the old shape and records `GenerationError`. The BOM also rejects dependency errors and changes awaiting recomputation so an outdated solid cannot slip into an export.
 
@@ -99,4 +106,4 @@ The [design notes](docs/design.md) cover the geometry, assembly layout and workf
 python -m pytest -q
 ```
 
-The suite has 41 tests. Tests run real FreeCAD solids headlessly, meaning without a desktop window. They check independently calculated volumes, invalid dimensions, spreadsheet changes after reopening, nested assembly quantities, CSV and Excel output, hole-spacing differences, saved library scans and revision rules. GitHub Actions runs the full suite on Ubuntu, then generates downloadable native CAD files and reports. Missing FreeCAD fails the suite rather than skipping geometry tests.
+The suite has 42 tests. Tests run real FreeCAD solids headlessly, meaning without a desktop window. They check independently calculated volumes, invalid dimensions, spreadsheet changes after reopening, nested assembly quantities, CSV and Excel output, hole-spacing differences, saved library scans and revision rules. GitHub Actions runs the full suite on Ubuntu, then generates downloadable native CAD files and reports. Missing FreeCAD fails the suite rather than skipping geometry tests.

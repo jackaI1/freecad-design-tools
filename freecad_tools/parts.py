@@ -180,8 +180,7 @@ def build_project(table, output):
                 link.setLink(part)
                 assembly.addObject(link)
                 link.LinkPlacement = App.Placement(App.Vector(*position), App.Rotation())
-            if App.GuiUp:
-                part.Visibility = False
+            part.Visibility = False
         document.recompute()
         document.saveAs(str(output / "assembly.FCStd"))
         from .bom import export_bom

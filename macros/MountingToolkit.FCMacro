@@ -21,13 +21,10 @@ if checkout:
         output = QtWidgets.QFileDialog.getExistingDirectory(None, "Choose EMPTY output directory")
         if output:
             try:
-                import FreeCAD as App
-                import FreeCADGui as Gui
                 from freecad_tools.parts import build_project
+                from freecad_tools.gui import open_assembly
                 result = build_project(table, output)
-                document = App.openDocument(str(result / "assembly.FCStd"))
-                Gui.activeDocument().activeView().viewAxonometric()
-                Gui.activeDocument().activeView().fitAll()
+                document = open_assembly(result / "assembly.FCStd")
                 QtWidgets.QMessageBox.information(None, "Toolkit", f"Assembly and reports saved in {result}")
             except Exception as error:
                 QtWidgets.QMessageBox.critical(None, "Toolkit error", str(error))
