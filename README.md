@@ -33,7 +33,10 @@ export PYTHONPATH="/Applications/FreeCAD.app/Contents/Resources/lib:$PWD/.freeca
 
 ### Ubuntu 24.04
 
+This uses the FreeCAD maintainers' stable package archive, because Ubuntu 24.04 does not include FreeCAD in its default package list.
+
 ```sh
+sudo add-apt-repository --yes ppa:freecad-maintainers/freecad-stable
 sudo apt-get update
 sudo apt-get install freecad-python3 python3-pytest python3-openpyxl
 export PYTHONPATH="/usr/lib/freecad-python3/lib:/usr/lib/freecad/lib:$PWD"

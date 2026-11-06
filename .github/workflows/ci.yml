@@ -16,6 +16,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install real FreeCAD runtime and test dependencies
         run: |
+          sudo add-apt-repository --yes ppa:freecad-maintainers/freecad-stable
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends freecad-python3 python3-pytest python3-openpyxl python3-venv
           python3 -m venv /tmp/lint
