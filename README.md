@@ -1,12 +1,14 @@
-# FreeCAD design tools
+I merged this into my existing [lifeos-desk-node project](https://github.com/jackaI1/lifeos-desk-node/tree/main/projects/freecad-design-tools). The current code is in `projects/freecad-design-tools/` there. I kept the code here so older links still work.
 
-I built a small toolkit for making mounting parts because changing the same dimensions in several CAD files made it too easy to lose track of which parts matched and how many I needed.
+The move keeps the original layout, including `freecad_tools/__init__.py`, `freecad_tools/cli.py`, `freecad_tools/bom.py`, `freecad_tools/geometry.py`. I replaced the README with the report below and left out Git history, installed dependencies, caches and generated build output from the hub copy.
 
-I enter dimensions in a table, then run one command to make plates, L-shaped brackets and hollow spacers. The toolkit also makes an example assembly, counts its parts, and highlights similar designs I could reuse. A local revision folder keeps drafts separate from files I have reviewed and released.
+The project checks are configured in the hub at `.github/workflows/freecad-design-tools-ci.yml`, with commands run from this project folder and changes filtered to its paths.
 
-**Try the example:** install FreeCAD and the Python dependencies below, then run `python -m freecad_tools generate examples/dimensions.csv build/demo` using FreeCAD's Python. Run [the assembly opener macro](macros/OpenAssembly.FCMacro) in FreeCAD, select this checkout and `build/demo/assembly.FCStd`, and read `build/demo/bom.xlsx` for the shopping-list view. The eight pieces are spread apart so I can inspect them; this is an exploded layout, not a mechanically constrained or load-tested assembly.
+---
 
-![Exploded eight-piece assembly opened in FreeCAD](examples/assembly-preview.png)
+# freecad-design-tools
+
+I built a small toolkit for making mounting parts to learn how the underlying idea works. This is a learning project.
 
 ## What I get
 
@@ -23,15 +25,6 @@ The CAD files use millimetres. All dimensions in the CSV are numbers, without un
 FreeCAD supplies the solid-modelling engine; installing a package named FreeCAD from pip is not a replacement. I test with FreeCAD 1.1 on macOS and the packaged FreeCAD runtime on Ubuntu 24.04.
 
 ### macOS
-
-```sh
-brew install --cask freecad
-# Run from this repository. Keep the app's Python separate from system Python.
-FCPY=/Applications/FreeCAD.app/Contents/Resources/bin/python
-"$FCPY" -m pip install --target .freecad-deps 'openpyxl>=3.1,<4' 'pytest>=8,<10'
-export PYTHONPATH="/Applications/FreeCAD.app/Contents/Resources/lib:$PWD/.freecad-deps:$PWD"
-"$FCPY" -m freecad_tools generate examples/dimensions.csv build/demo
-```
 
 ### Ubuntu 24.04
 
@@ -66,20 +59,6 @@ FreeCAD 1.1 restricts which Python modules a saved file can load automatically. 
 
 Each native part includes a spreadsheet named `Dimensions_...`. Edit a number in column B and recompute the document to change the solid. The Python proxy, a small class that rebuilds the shape, restores when I reopen the file. If dimensions become impossible, it clears the old shape and records `GenerationError`. The BOM also rejects dependency errors and changes awaiting recomputation so an outdated solid cannot slip into an export.
 
-## Export and check for reuse
-
-Use the same Python and `PYTHONPATH` from setup. On macOS, replace `python` below with `"$FCPY"`; on Ubuntu use `/usr/bin/python3`.
-
-```sh
-python -m freecad_tools bom build/demo/assembly.FCStd build/demo/updated-bom
-python -m freecad_tools reuse build/demo/library build/demo/reuse-check.csv
-python -m freecad_tools reuse build/demo/library build/demo/strict.csv --box-mm 0.1 --hole-mm 0.1 --volume-fraction 0.005
-```
-
-The BOM walks the `Assembly` object and follows links, including repeated links to nested subassemblies. It groups by part ID and revision, checks that matching IDs really describe the same solid and material, and keeps different revisions on separate lines. Unlabelled geometry, broken links and conflicting definitions stop the export. Link arrays must first be expanded into individual links. Scaled occurrences need their own part definition, so their volume cannot be mistaken for the original.
-
-The reuse check reads saved solids from the library. It compares bounding-box dimensions, volume and concave cylindrical surfaces, which identify circular bores and their axes. Defaults allow 0.25 mm differences in size and bore geometry, and a 1% volume difference. It ignores translation but assumes matching orientation. It reads top-level solids and the final shape of PartDesign bodies, leaving sketches and construction history out of the comparison. It does not recognise every pocket, slot, thread or rotated equivalent, and never automatically replaces a part. I still check fit, material and intended use.
-
 ## Keep a reviewed revision
 
 PDM means product data management: keeping a design's saved files and revision history in order. This is a local imitation of that workflow, not a shared engineering approval system.
@@ -99,11 +78,10 @@ The vault locks its index while writing, saves files by their SHA-256 content ha
 
 The [design notes](docs/design.md) cover the geometry, assembly layout and workflow limits. [freecad_tools/parts.py](freecad_tools/parts.py) builds solids using FreeCAD's [Part scripting API](https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki/Part_scripting.md) and native [spreadsheet expressions](https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki/Spreadsheet_Workbench.md). The other modules handle BOMs, reuse comparison and the revision vault. There is no SolidWorks automation or SolidWorks file compatibility here; these are FreeCAD Python macros and design tools.
 
-## Tests and CI
+## Tests and limits
 
-```sh
-# After the setup above, using the same FreeCAD-enabled interpreter:
-python -m pytest -q
-```
+There are 7 test source files in this copy. That source count does not establish an execution result. This is a source snapshot, and running it on a new machine may need environment-specific setup.
 
-The suite has 42 tests. Tests run real FreeCAD solids headlessly, meaning without a desktop window. They check independently calculated volumes, invalid dimensions, spreadsheet changes after reopening, nested assembly quantities, CSV and Excel output, hole-spacing differences, saved library scans and revision rules. GitHub Actions runs the full suite on Ubuntu, then generates downloadable native CAD files and reports. Missing FreeCAD fails the suite rather than skipping geometry tests.
+
+
+Retained project workflows: `freecad-design-tools-ci.yml`. Their commands use this folder and their triggers use its paths.
