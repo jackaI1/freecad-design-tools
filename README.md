@@ -10,6 +10,8 @@ The project checks are configured in the hub at `.github/workflows/freecad-desig
 
 I built a small toolkit for making mounting parts to learn how the underlying idea works. This is a learning project.
 
+I use illustrative part dimensions and generated example geometry.
+
 ## What I get
 
 - Six editable part variants from [the dimension table](examples/dimensions.csv).
